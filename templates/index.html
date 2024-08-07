@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PV and IV Characteristics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>PV and IV Characteristics</h1>
+    <button onclick="simulate()">Simulate</button>
+    <div>
+        <canvas id="ivChart"></canvas>
+    </div>
+    <div>
+        <canvas id="pvChart"></canvas>
+    </div>
+
+    <script>
+        async function simulate() {
+            const response = await fetch('/simulate', { method: 'POST' });
+            const data = await response.json();
+
+            const ivCtx = document.getElementById('ivChart').getContext('2d');
+            const pvCtx = document.getElementById('pvChart').getContext('2d');
+
+            new Chart(ivCtx, {
+                type: 'line',
+                data: {
+                    labels: data.voltage,
+                    datasets: [{
+                        label: 'I-V Curve',
+                        data: data.current,
+                        borderColor: 'blue',
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'I-V Characteristics'
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Voltage (V)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Current (A)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            new Chart(pvCtx, {
+                type: 'line',
+                data: {
+                    labels: data.voltage,
+                    datasets: [{
+                        label: 'P-V Curve',
+                        data: data.power,
+                        borderColor: 'red',
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'P-V Characteristics'
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Voltage (V)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Power (W)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
